@@ -1,0 +1,119 @@
+<span defaultOverlayTarget></span>
+<div class="content-heading">
+  {{ 'pages.customers.customers' | translate }}
+  <small>{{ 'pages.reports.customers.title' | translate }}</small>
+</div>
+<block-ui>
+  <div class="panel">
+    <form [formGroup]="valForm" class="form-validate form-horizontal"
+          (submit)="submit($event, valForm.value)"
+          novalidate="">
+      <div class="panel-body">
+        <fieldset>
+          <legend>{{ 'global.general.parameters' | translate }}</legend>
+          <div class="row mb-lg">
+            <div class="col-md-4">
+              <div class="form-group">
+                <label class="col-sm-3 control-label">{{'pages.companies.company' | translate }}</label>
+                <div class="col-sm-7">
+                  <select class="form-control" name="company" formControlName="company_id" [formControl]="valForm.controls['company_id']">
+                    <option *ngFor="let company of companies" [value]="company.id">{{ company.name }}</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <label class="col-sm-3 control-label">{{'pages.reports.status' | translate }}</label>
+                <div class="col-sm-7">
+                  <select class="form-control" name="status" formControlName="status" [formControl]="valForm.controls['status']">
+                    <option value="all">{{ 'pages.reports.all' | translate }}</option>
+                    <option value="enabled">{{ 'pages.reports.enabled' | translate }}</option>
+                    <option value="disabled">{{ 'pages.reports.disabled' | translate }}</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">
+              <div class="form-group">
+                <label class="col-sm-3 control-label">{{ 'pages.reports.start_date' | translate }}</label>
+                <div class="col-sm-5">
+                  <p-calendar icon="fa-calendar" inputStyleClass="form-control" formControlName="start_date"
+                              dateFormat="dd-mm-yy"></p-calendar>
+                  <br/>
+                  <span class="text-danger"
+                        *ngIf="valForm.controls['start_date'].hasError('required') && (valForm.controls['start_date'].dirty || valForm.controls['start_date'].touched)">{{ 'global.general.field_required' | translate }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <label class="col-sm-3 control-label">{{ 'pages.reports.end_date' | translate }}</label>
+                <div class="col-sm-5">
+                  <p-calendar icon="fa-calendar" inputStyleClass="form-control" formControlName="end_date"
+                              dateFormat="dd-mm-yy"></p-calendar>
+                  <br/>
+                  <span class="text-danger"
+                        *ngIf="valForm.controls['end_date'].hasError('required') && (valForm.controls['end_date'].dirty || valForm.controls['end_date'].touched)">{{ 'global.general.field_required' | translate }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </fieldset>
+      </div>
+      <div class="panel-footer">
+        <button type="submit" class="btn btn-primary" [disabled]="!valForm.valid || loading">{{ 'pages.reports.generate_information' |
+          translate }}
+        </button>
+        <button type="button" class="btn btn-default" [disabled]="customers.length == 0 || loading" (click)="customerTable.exportCSV()"><i class="fa fa-download"></i> {{ 'pages.reports.export' |
+          translate }}
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div class="panel">
+    <div class="panel-body">
+      <p-dataTable #customerTable [value]="customers" [rows]="10" [scrollable]="true" scrollHeight="350px"
+                   selectionMode="single" resizableColumns="true">
+        <p-column field="id" header="{{ 'pages.reports.customers.customer_id' | translate}}"></p-column>
+        <p-column field="fullname" header="{{ 'pages.customers.fullname' | translate}}"></p-column>
+        <p-column field="document_type" header="{{ 'pages.customers.document_type' | translate}}">
+          <template let-col let-customer="rowData" pTemplate="body">
+            <div class="text">
+              {{ 'pages.customers.'+customer.document_type | translate }}
+            </div>
+          </template>
+        </p-column>
+        <p-column field="document_number" header="{{ 'pages.customers.document_number' | translate}}">
+          <template let-col let-customer="rowData" pTemplate="body">
+            <div class="text">
+              {{ customer.document_number }}
+            </div>
+          </template>
+        </p-column>
+        <p-column field="email" header="{{ 'pages.customers.email' | translate}}"></p-column>
+        <p-column field="phone" header="{{ 'pages.reports.customers.phone' | translate}}"></p-column>
+        <p-column field="satisfaction" header="{{ 'pages.reports.customers.satisfaction' | translate}}">
+          <template let-col let-customer="rowData" pTemplate="body">
+            <div class="text">
+              {{ 'pages.customers.'+customer.satisfaction | translate }}
+            </div>
+          </template>
+        </p-column>
+        <p-column field="abandoned" header="{{ 'pages.reports.customers.abandoned' | translate}}">
+          <template let-col let-customer="rowData" pTemplate="body">
+            <div class="text">
+              <span *ngIf="customer.abandoned">{{ 'pages.reports.customers.abandoned' | translate}}</span>
+            </div>
+          </template>
+        </p-column>
+        <p-column field="hold_time" header="{{ 'pages.reports.customers.hold_time' | translate}}"></p-column>
+        <p-column field="talk_time" header="{{ 'pages.reports.customers.talk_time' | translate}}"></p-column>
+      </p-dataTable>
+    </div>
+  </div>
+
+</block-ui>

@@ -1,0 +1,198 @@
+<span defaultOverlayTarget></span>
+<div class="content-heading">
+  {{ 'pages.search.totals' | translate }}
+  <small>{{ 'pages.reports.totals.title' | translate }}</small>
+</div>
+<block-ui>
+  <div class="panel">
+    <form [formGroup]="valForm" class="form-validate form-horizontal"
+          (submit)="submit($event, valForm.value)"
+          novalidate="">
+      <div class="panel-body">
+        <fieldset>
+          <legend>{{ 'global.general.parameters' | translate }}</legend>
+          <div class="row mb-lg">
+            <div class="col-md-4">
+              <div class="form-group">
+                <label class="col-sm-3 control-label">{{'pages.companies.company' | translate }}</label>
+                <div class="col-sm-7">
+                  <select class="form-control" name="company" formControlName="company_id" [formControl]="valForm.controls['company_id']">
+                    <option *ngFor="let company of companies" [value]="company.id">{{ company.name }}</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <label class="col-sm-3 control-label">{{'pages.reports.interface' | translate }}</label>
+                <div class="col-sm-7">
+                  <select class="form-control" name="interface_id" formControlName="interface_id" [formControl]="valForm.controls['interface_id']">
+                    <option [value]="''">{{ 'pages.reports.all' | translate }}</option>
+                    <option *ngFor="let i of interfaces" [value]="i.code">{{ i.name }}</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">
+              <div class="form-group">
+                <label class="col-sm-3 control-label">{{ 'pages.reports.start_date' | translate }}</label>
+                <div class="col-sm-5">
+                  <p-calendar icon="fa-calendar" inputStyleClass="form-control" formControlName="start_date"
+                              dateFormat="dd-mm-yy"></p-calendar>
+                  <br/>
+                  <span class="text-danger"
+                        *ngIf="valForm.controls['start_date'].hasError('required') && (valForm.controls['start_date'].dirty || valForm.controls['start_date'].touched)">{{ 'global.general.field_required' | translate }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <label class="col-sm-3 control-label">{{ 'pages.reports.end_date' | translate }}</label>
+                <div class="col-sm-5">
+                  <p-calendar icon="fa-calendar" inputStyleClass="form-control" formControlName="end_date"
+                              dateFormat="dd-mm-yy"></p-calendar>
+                  <br/>
+                  <span class="text-danger"
+                        *ngIf="valForm.controls['end_date'].hasError('required') && (valForm.controls['end_date'].dirty || valForm.controls['end_date'].touched)">{{ 'global.general.field_required' | translate }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </fieldset>
+      </div>
+      <div class="panel-footer">
+        <button type="submit" class="btn btn-primary" [disabled]="!valForm.valid">{{ 'pages.reports.generate_information' |
+          translate }}
+        </button>
+        <button type="button" class="btn btn-default" [disabled]="!valForm.valid" (click)="export(valForm.value)"><i class="fa fa-download"></i> {{ 'pages.reports.export' | translate }}
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div class="panel">
+    <div class="panel-body">
+      <p-dataTable #pollTable [value]="bot" [rows]="10" [scrollable]="true" scrollHeight="350px"
+                   selectionMode="single" resizableColumns="true">
+        <!--<p-column field="id" header="{{ 'pages.reports.bot.case' | translate}}" >
+          <template let-col let-bot="rowData" pTemplate="body">
+            <div class="text-center">
+                {{ bot.case }}
+                 <button data-toggle="modal" data-target="#exampleModal" (click)="showMessage(case.channel_id, case.interface.code, case.user_created)" type="button" class="btn btn-primary"><em class="icon-bubble"></em></button> 
+            </div>
+          </template>
+        </p-column>-->
+        <!-- <p-column field="message" header="Message" >
+          <template let-col let-poll="rowData" pTemplate="body">
+            <div class="text-center">
+              <button data-toggle="modal" data-target="#exampleModal" (click)="showMessage(case.channel_id, case.session_id, case.interface.code, case.user_created)" type="button" class="btn btn-primary"><em class="icon-bubble"></em></button>
+            </div>
+          </template>
+        </p-column> 
+        <p-column field="helped" header="{{ 'pages.reports.polls.helped' | translate}}">
+          <template let-col let-poll="rowData" pTemplate="body">
+            <div class="text-center">
+                {{ poll.helped }}
+            </div>
+          </template>
+        </p-column> -->
+        <!--p-column field="step" header="{{ 'pages.steps.step' | translate}}">
+          <template let-col let-case="rowData" pTemplate="body">
+            <div class="text-center" *ngIf="case.step">
+              {{ case.step.name }}
+            </div>
+          </template>
+        </p-column>
+        <p-column field="department" header="{{ 'pages.departments.department' | translate}}">
+          <template let-col let-case="rowData" pTemplate="body">
+            <div class="text-center" *ngIf="case.department">
+              {{ case.department.name }}
+            </div>
+          </template>
+        </p-column-->
+        <!-- <p-column field="origin_id" header="{{ 'pages.reports.cases.origin_id' | translate}}"></p-column> -->
+        <!--p-column field="type" header="{{ 'pages.reports.cases.type' | translate}}">
+          <template let-col let-case="rowData" pTemplate="body">
+            <span *ngIf="!case.type.parent">{{ case.type.name }}</span>
+            <span *ngIf="case.type.parent">{{ case.type.parent.name }}</span>
+          </template>
+        </p-column-->
+        <p-column field="rate" header="{{ 'pages.reports.totals.date' | translate}}">
+          <template let-col let-bot="rowData" pTemplate="body" >
+            <div class="text-center">
+              <span>{{ bot.phone }}</span>
+            </div>
+          </template>
+        </p-column>
+        <p-column field="description" header="{{ 'pages.reports.totals.totals' | translate}}">
+          <template let-col let-bot="rowData" pTemplate="body">
+            <div class="text-center">
+              {{ bot.text}}
+            </div>
+          </template>
+        </p-column>
+        <p-column field="created" header="{{ 'pages.reports.totals.contacts' | translate }}">
+          <template let-col let-bot="rowData" pTemplate="body">
+            <div class="text-center">
+              {{ bot.created | toDate | amDateFormat: 'YYYY-MM-DD'}}
+            </div>
+          </template>
+        </p-column>
+        <p-column field="modified" header="{{ 'pages.reports.totals.atendoperator' | translate}}">
+          <template let-col let-bot="rowData" pTemplate="body">
+            <div class="text-center">
+              {{ bot.created | toDate | amDateFormat: 'HH:mm:ss' }}
+            </div>
+          </template>
+        </p-column>
+        <p-column field="modified" header="{{ 'pages.reports.totals.atenddigi' | translate}}">
+          <template let-col let-bot="rowData" pTemplate="body">
+            <div class="text-center">
+              {{ bot.created | toDate | amDateFormat: 'HH:mm:ss' }}
+            </div>
+          </template>
+        </p-column>        
+        <!--p-column field="user_created" header="{{ 'pages.reports.cases.assisted' | translate}}">
+          <template let-col let-customer="rowData" pTemplate="body">
+            <div class="text">
+              {{ '@'+customer.user_created.username+' / '+customer.user_created.first_name + ' '+customer.user_created.last_name}}
+            </div>
+          </template>
+        </p-column>
+        <p-column field="client" header="{{ 'pages.reports.cases.customer' | translate}}">
+          <template let-col let-case="rowData" pTemplate="body">
+            <div *ngIf="case.client" class="text">
+              {{ '#'+case.client.id+' / '+case.client.fullname}}
+            </div>
+          </template>
+        </p-column-->
+        <!--<p-column field="hold_time" header="{{ 'pages.reports.customers.hold_time' | translate}}">
+          <template let-col let-case="rowData" pTemplate="body">
+            <div class="text-center">
+              {{ sec_to_time(case.hold_time) }}
+            </div>
+          </template>
+        </p-column>-->
+        <!--p-column field="hold_time" header="{{ 'pages.reports.customers.hold_time' | translate}}"></p-column-->
+        <!--<p-column field="talk_time" header="{{ 'pages.reports.customers.talk_time' | translate}}">
+          <template let-col let-case="rowData" pTemplate="body">
+            <div class="text-center">
+              {{ sec_to_time(case.talk_time) }}
+            </div>
+          </template>
+        </p-column>-->
+        <!--p-column field="talk_time" header="{{ 'pages.reports.customers.talk_time' | translate}}"></p-column>
+        <p-column field="about" header="{{ 'pages.reports.cases.about' | translate}}"></p-column>
+        <p-column field="resolution" header="{{ 'pages.reports.cases.resolution' | translate}}"></p-column-->
+      </p-dataTable>
+    </div>
+  </div>
+</block-ui>
+
+<!-- inicio prueba modal -->
+<!-- Button trigger modal -->
+<!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+  Launch demo modal
+</button> -->

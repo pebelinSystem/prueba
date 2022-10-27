@@ -1,0 +1,41 @@
+.modal-body{
+    background-image: url("https://www.todoiphone.net/wp-content/uploads/2014/03/WhatsApp-Wallpaper-39.jpg");
+}
+
+/* .modal-backdrop{
+    z-index: -1 !important;
+} */
+
+.modal-dialog{
+  position: absolute;
+  left: 50%;
+  top: 5%;
+  transform: translate(-50%, -0%) !important;
+}
+
+.mensaje-entrante{
+    width: 66%;
+    background-color: #fafafa;
+    color: #141414;
+}
+.mensaje-saliente{
+    width: 66,666%;
+    color: #141414;
+    /* float: right; */
+} 
+
+.modal-index{
+    z-index: 1;
+}
+
+.persona_com{
+    font-weight: bold;
+}
+
+.fecha_in{
+    font-size: 0.9em;
+}
+
+.fecha_out{
+    font-size: 0.9em;
+}

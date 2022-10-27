@@ -1,0 +1,318 @@
+<span defaultOverlayTarget></span>
+<div class="content-heading">
+  {{ 'pages.search.cases' | translate }}
+  <small>{{ 'pages.reports.cases.title' | translate }}</small>
+</div>
+<block-ui>
+  <div class="panel">
+    <form [formGroup]="valForm" class="form-validate form-horizontal"
+          (submit)="submit($event, valForm.value)"
+          novalidate="">
+      <div class="panel-body">
+        <fieldset>
+          <legend>{{ 'global.general.parameters' | translate }}</legend>
+          <div class="row mb-lg">
+            <div class="col-md-4">
+              <div class="form-group">
+                <label class="col-sm-3 control-label">{{'pages.companies.company' | translate }}</label>
+                <div class="col-sm-7">
+                  <select class="form-control" name="company" formControlName="company_id" [formControl]="valForm.controls['company_id']">
+                    <option *ngFor="let company of companies" [value]="company.id">{{ company.name }}</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <label class="col-sm-3 control-label">{{'pages.reports.interface' | translate }}</label>
+                <div class="col-sm-7">
+                  <select class="form-control" name="interface_id" formControlName="interface_id" [formControl]="valForm.controls['interface_id']">
+                    <option [value]="''">{{ 'pages.reports.all' | translate }}</option>
+                    <option *ngFor="let i of interfaces" [value]="i.code">{{ i.name }}</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">
+              <div class="form-group">
+                <label class="col-sm-3 control-label">{{ 'pages.reports.start_date' | translate }}</label>
+                <div class="col-sm-5">
+                  <p-calendar icon="fa-calendar" inputStyleClass="form-control" formControlName="start_date"
+                              dateFormat="dd-mm-yy"></p-calendar>
+                  <br/>
+                  <span class="text-danger"
+                        *ngIf="valForm.controls['start_date'].hasError('required') && (valForm.controls['start_date'].dirty || valForm.controls['start_date'].touched)">{{ 'global.general.field_required' | translate }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <label class="col-sm-3 control-label">{{ 'pages.reports.end_date' | translate }}</label>
+                <div class="col-sm-5">
+                  <p-calendar icon="fa-calendar" inputStyleClass="form-control" formControlName="end_date"
+                              dateFormat="dd-mm-yy"></p-calendar>
+                  <br/>
+                  <span class="text-danger"
+                        *ngIf="valForm.controls['end_date'].hasError('required') && (valForm.controls['end_date'].dirty || valForm.controls['end_date'].touched)">{{ 'global.general.field_required' | translate }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </fieldset>
+      </div>
+      <div class="panel-footer">
+        <button type="submit" class="btn btn-primary" [disabled]="!valForm.valid">{{ 'pages.reports.generate_information' |
+          translate }}
+        </button>
+        <button type="button" class="btn btn-default" [disabled]="!valForm.valid" (click)="export_excel(valForm.value)"><i class="fa fa-download"></i> {{ 'pages.reports.export' |
+          translate }}
+        </button>
+        <button type="button" class="btn btn-default" [disabled]="!valForm.valid" (click)="export(valForm.value)"><i class="fa fa-download"></i> {{ 'pages.reports.exportCSV' |
+          translate }}
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div class="panel">
+    <div class="panel-body">
+      <p-dataTable #caseTable [value]="cases" [rows]="10" [scrollable]="true" scrollHeight="350px"
+                   selectionMode="single" resizableColumns="true">
+        <p-column field="id" header="{{ 'pages.reports.cases.id' | translate}}" >
+          <template let-col let-case="rowData" pTemplate="body">
+            <div class="text-center">
+                {{ case.id }}
+                <!-- <button data-toggle="modal" data-target="#exampleModal" (click)="showMessage(case.channel_id, case.interface.code, case.user_created)" type="button" class="btn btn-primary"><em class="icon-bubble"></em></button> -->
+            </div>
+          </template>
+        </p-column>
+        <p-column field="message" header="{{ 'pages.reports.cases.message' | translate}}" >
+          <template let-col let-case="rowData" pTemplate="body">
+            <div class="text-center">
+              <button data-toggle="modal" data-target="#exampleModal" (click)="showMessage(case.channel_id, case.session_id, case.interface.code, case.user_created)" type="button" class="btn btn-primary"><em class="icon-bubble"></em></button>
+            </div>
+          </template>
+        </p-column>
+        <p-column field="account" header="{{ 'pages.reports.cases.account' | translate}}">
+          <template let-col let-case="rowData" pTemplate="body">
+            <div class="text-center">
+                {{ case.account.username }}
+            </div>
+          </template>
+        </p-column>        
+        <p-column field="interface"  header="{{ 'pages.reports.cases.interface' | translate}}" >
+          <template let-col let-case="rowData" pTemplate="body">
+            <div class="text-center">
+                {{ case.interface.code }}
+            </div>
+          </template>
+        </p-column>
+          <p-column  field="origin_id" header="{{ 'pages.reports.cases.customerGSM' | translate}}">
+          </p-column>
+    
+        <p-column field="created" header="{{ 'pages.reports.cases.date' | translate}}">
+          <template let-col let-case="rowData" pTemplate="body">
+            <div class="text-center">
+              {{ case.created | toDate | amDateFormat: 'YYYY-MM-DD' }}
+            </div>
+          </template>
+        </p-column>
+        <p-column field="time" header="{{ 'pages.reports.cases.time' | translate}}">
+          <template let-col let-case="rowData" pTemplate="body">
+            <div class="text-center">
+              {{ case.created | toDate | amDateFormat: 'HH:mm:ss' }}
+            </div>
+          </template>
+        </p-column>
+        <p-column field="step" header="{{ 'pages.reports.cases.step' | translate}}">
+          <template let-col let-case="rowData" pTemplate="body">
+            <span *ngIf="case.step">{{ case.step.name }}</span>
+          </template>
+        </p-column>
+        <p-column field="l_type" header="{{ 'pages.reports.cases.type' | translate}}">
+          <template let-col let-case="rowData" pTemplate="body">
+            <span *ngIf="case.l_type">{{ case.l_type }}</span>
+          </template>
+        </p-column>
+        <p-column field="l_type_client" header="{{ 'pages.reports.cases.typeClient' | translate}}">
+          <template let-col let-case="rowData" pTemplate="body">
+            <span *ngIf="case.l_type_client">{{ case.l_type_client }}</span>
+          </template>
+        </p-column>
+        <p-column field="l_vip_code" header="{{ 'pages.reports.cases.vipCode' | translate}}">
+          <template let-col let-case="rowData" pTemplate="body">
+            <span *ngIf="case.l_vip_code">{{ case.l_vip_code }}</span>
+          </template>
+        </p-column>
+        <p-column field="type.parent" header="{{ 'pages.reports.cases.interaction' | translate}}">
+          <template let-col let-case="rowData" pTemplate="body">
+            <span *ngIf="case.type.parent">{{ case.type.parent.name}}</span>
+          </template>
+        </p-column>
+        <p-column field="subtype" header="{{ 'pages.reports.cases.subtype' | translate}}">
+          <template let-col let-case="rowData" pTemplate="body">
+            <span *ngIf="case.type.parent">{{ case.type.name }}</span>
+          </template>
+        </p-column>
+        <p-column field="user_created.username" header="{{ 'pages.reports.cases.assisted' | translate}}">
+          <template let-col let-case="rowData" pTemplate="body">
+            <span *ngIf="case.user_created.username">{{ case.user_created.username }}</span>
+          </template>
+        </p-column>       
+     
+        <p-column field="about" header="{{ 'pages.reports.cases.request' | translate}}">
+          <template let-col let-case="rowData" pTemplate="body">
+            <span *ngIf="case.about">{{ case.about }}</span>
+          </template>
+        </p-column>
+        <p-column field="resolution" header="{{ 'pages.reports.cases.resolution' | translate}}">
+          <template let-col let-case="rowData" pTemplate="body">
+            <span *ngIf="case.resolution">{{ case.resolution }}</span>
+          </template>
+        </p-column>        
+
+        <p-column field="hold_time" header="{{ 'pages.reports.cases.hold_time' | translate}}">
+          <template let-col let-case="rowData" pTemplate="body">
+            <div class="text-center">
+              {{ sec_to_time(case.hold_time) }}
+            </div>
+          </template>
+        </p-column>
+
+        <p-column field="talk_time" header="{{ 'pages.reports.cases.talk_time' | translate}}">
+          <template let-col let-case="rowData" pTemplate="body">
+            <div class="text-center">
+              {{ sec_to_time(case.talk_time) }}
+            </div>
+          </template>
+        </p-column>
+    
+      </p-dataTable>
+    </div>
+  </div>
+</block-ui>
+
+<!-- inicio prueba modal -->
+<!-- Button trigger modal -->
+<!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+  Launch demo modal
+</button> -->
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-index" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="id" field="id">Mensajes del cliente <span class="persona_com">{{messages.length > 0 ? messages[0].origin_id : ''}}</span></h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div *ngIf="Botmessages.length<=0">
+          <div class="alert alert-danger" role="alert">
+            <h4>No hay mensajes</h4>
+          </div>
+        </div>
+        <div *ngFor="let message of Botmessages">
+          <div class="mensaje-entrante alert alert-info" *ngIf="message.inout=='I'; else mensajeOperador">
+            <div class="persona_com">
+         
+              <div *ngIf ="message.phone_origin != ''" > {{message.phone_origin}}</div>
+              
+              <div *ngIf ="message.author_origin != ''" > {{message.author_origin}}</div>
+            </div>
+            {{message.text}}
+
+            <div *ngFor="let attachment of message.attachments">
+       
+
+              <div *ngIf=" attachment.type == 'image'" class="widget mb">
+                <p>
+                  <img [src]="attachment.url" class="img-responsive" (dblclick)="openImage()">
+                </p>
+                 <!-- {{nameFile[0].substr(0,40)}}  -->
+                 {{attachment.url?rendered(attachment.url):''}}
+              </div>
+  
+              <div *ngIf=" attachment.type == 'document'" class="widget mb">
+                
+                <a [href]="attachment.url" target="_blank" download="{{ attachment.caption }}">
+                  <p>
+                    <img src = 'assets/img/report/document.png' style="width:10%">
+                    <!-- {{nameFile[0].substr(0,40)}}  -->
+                    {{attachment.url?rendered(attachment.url):''}}
+                    <!-- {{attachment.url.split("/").length?attachment.url.split("/")[attachment.url.split("/").length-1].substr(0,40):''}} -->
+                  <!-- {{nameFile.substr(0,40)}}-->  
+ 
+                  <img src = 'assets/img/report/download.png' style="width:10%">
+                  </p>
+                  <div>
+                    <span class="text-bold">{{ attachment.caption }}</span><br/>
+                    <span class="text-muted">{{ attachment.size | bytes }}</span>
+                  </div>
+                </a>
+              </div>
+            </div>
+
+            <div class="fecha_in text-right">
+              {{formatDate(message.created)}}
+            </div>
+          </div>
+          <ng-template #mensajeOperador>
+            <div class="mensaje-saliente alert alert-success text-right col-md-offset-4">
+              <div class="persona_com" *ngIf="message.message_type=='text'&&message.channel_id!=null; else mensajeBot">
+                {{messageAgent.username}}
+              </div>
+              <ng-template #mensajeBot>
+                <div class="persona_com" >
+                  ChatBot
+                </div>
+              </ng-template>
+              {{message.text}}
+
+              <div *ngFor="let attachment of message.attachments">
+       
+                <div *ngIf=" attachment.type == 'image'" class="widget mb">
+                  <p>
+                    <img [src]="attachment.url" class="img-responsive" (dblclick)="openImage()">
+                  </p>
+                   <!-- {{nameFile[0].substr(0,40)}}  -->
+                   {{attachment.url?rendered(attachment.url):''}}
+                </div>
+    
+                <div *ngIf=" attachment.type == 'document'" class="widget mb">
+                  <a [href]="attachment.url" target="_blank" download="{{ attachment.caption }}">
+                    <p>
+                      <img src = 'assets/img/report/document.png' style="width:10%">
+                      <!-- {{nameFile[0].substr(0,40)}}  -->
+                      {{attachment.url?rendered(attachment.url):''}}
+                      <!-- {{attachment.url.split("/").length?attachment.url.split("/")[attachment.url.split("/").length-1].substr(0,40):''}} -->
+                    <!-- {{nameFile.substr(0,40)}}-->  
+   
+                    <img src = 'assets/img/report/download.png' style="width:10%">
+                    </p>
+                    <div>
+                      <span class="text-bold">{{ attachment.caption }}</span><br/>
+                      <span class="text-muted">{{ attachment.size | bytes }}</span>
+                    </div>
+                  </a>
+                </div>
+              </div>
+
+              <div class="fecha_out text-left">
+                {{formatDate(message.created)}}
+              </div>
+            </div>
+          </ng-template>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- fin prueba modal -->
